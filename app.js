@@ -8,7 +8,7 @@ var express = require('express')
   , user = require('./routes/user')
   , http = require('http')
   , path = require('path');
-
+var request1 = require('request');
 var app = express();
 
 // all environments
@@ -26,6 +26,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
+var Greet= ['Hi there. I am Deary, how can I help you?', 'Hi. I am Deary, how can I help you?', 'Hello. I am Deary, how can I help you', 'Hey. I am Deary, how can I help you']; 
+var Maintenance= ['Oh! Sorry for the inconvenience, maintenance engineer will be attending your issue soon', 'Issue has been logged, your problem will be fixed soon', 'Sad about it! will take care of this problem', 'I feel sorry for that, your issue will be attended soon'];
+var Emergency= ['I can help you with that', 'Calling 911..', 'I can reach out to your emergency contact', 'Take care, Contacting your doctor'];
+var Weather= ['It is cold/ hot/windy/rainy today', 'It is 54o, likely to rain tonight', 'Sunrise is at 5=30 AM today'];
+var Useless= ['I never really thought about it', 'hmm..', 'Ok, How can I help you with that', 'This is not for what I am here', 'I don’t think I can explain it', 'I wouldn’t worry about it'];
+var Bye= [ 'Bye', ' See you, It’s been a pleasure', 'Ok, see you later', 'You too. Bye', 'Bye bye!', 'Have a good one', 'All right then'];
 
 app.get('/', routes.index);
 app.get('/users', user.list);
@@ -34,13 +40,44 @@ var server = http.createServer(app).listen(app.get('port'), function(){
 });
 var io = require('socket.io')(server);
 io.on('connect', function(socket){
-	  console.log('a user connected');
-	  socket.on('disconnect', function(){
-		    console.log('user disconnected');
-		  });
+	var input = "I can't get that!";  
+	console.log('a user connected');
 	  socket.on('chat message', function(msg){
-		  socket.emit('chat message', msg);  
-		  console.log('message: ' + msg);
+		  console.log('message from client: ' + msg);
+		  request1("http://ec2-34-207-241-247.compute-1.amazonaws.com:5000/classify?sentence="+msg, function (error, response, body) {
+				console.log('error:', error); // Print the error if one occurred 
+				console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received 
+				console.log('body:', body); // Print the HTML for the Google homepage. 
+				if(body == 'useless'){
+					input = Useless[Math.floor(Math.random() * Useless.length)];
+				}
+				else if(body == 'DearyWeather'){
+					input = Weather[Math.floor(Math.random() * Weather.length)];
+				}
+				else if(body == 'DearyMaint'){
+					input = Maintenance[Math.floor(Math.random() * Maintenance.length)];
+				}
+				else if(body == 'DearyEmergency'){
+					input = Emergency[Math.floor(Math.random() * Emergency.length)];
+				}
+				else if(body == 'DearyBye'){
+					input = Bye[Math.floor(Math.random() * Bye.length)];
+				}
+				else if(body == 'DearyGreet'){
+					input = Greet[Math.floor(Math.random() * Greet.length)];
+				}else{
+					input = 'I couldn\'t get that!';
+				}
+				socket.on('disconnect', function(){
+				    console.log('user disconnected');
+				  });
+				socket.emit('chat message', input);
+				console.log("Replied: "+input);
+			});
+		    
+		  
 		  });
+	
+	  
 	});
 	
