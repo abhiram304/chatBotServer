@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <meta charset="utf-8">
+    <title>Stadium Vision & Live Scorer</title>
+  <!--  <link rel='stylesheet' href='/stylesheets/style.css' />   -->
+	<style type="text/css">
+		.b{
+  border: 2px  ridge;
+   margin: 220px 300px;
+	border-radius: 0px;
+	   }
+    </style>
+  </head>
+  <body>
+
+   <div id="content">
+<div class="b">
+  <section style="background-color:#00FFFF;padding:5px;text-align:center;color:white;">
+    <h2><b>Live Score</b></h2>
+  </section>
+   <div class="row">
+    <div class="col-sm-12">
+  <br>
+  <h style="padding-left:20px;padding-top:30px"><b>Live Cricket Score: </b></h>
+  <br>
+  <br>
+  <div id='box'>
+  <h style="padding-left:30px;padding-top:30px"><b></b></h><span id="confirmMessage" class="confirmMessage"></span> 
+  <br>
+  <h style="padding-left:30px;padding-top:30px"><b></b></h><span id="confirmMessage2" class="confirmMessage2"></span> 
+  <br><br><br><br>
+  </div>
+  </div>
+  </div>
+   <div class="row" style="padding-left:100px" >
+  <div class="col-sm-4" >
+  <input type="text" name="ip" id ="ip">
+  <button id="res" style="padding:15px;background-color:#9ACD32;padding-left:15px;height:60px;width:100px;" onclick="response();"><b>Tune-In</b></button>
+  </div>
+  <div class="col-sm-8">
+  <button id="stopRes" style="padding:15px;background-color:#FF6347; padding-left:15px;height:60px;width:100px;"><b>Tune-Out</b></button>
+  <br>
+  </div>
+  </div>
+  <br><br>
+  </div> 
+  </div>
+  <script type="text/javascript">
+  //  var content = document.getElementById('content');
+$(document).ready(function(){
+    $("#stopRes").click(function(){
+        $("#box").hide();
+    });
+    $("#res").click(function(){
+        $("#box").show();
+    });
+});
+
+	function response(){
+	var msg = document.getElementById('confirmMessage');
+	var msg2 = document.getElementById('confirmMessage2');
+    var socket = new WebSocket('ws://localhost:1337');
+    var ip = document.getElementById('ip');
+    socket.onopen = function () {
+        socket.send(ip);
+    };
+    socket.onmessage = function (message) {
+        msg.innerHTML = '<h4 style="padding-left:20px;padding-top:20px"><b>'+message.data+'</b></h4>' +'<br />';
+    };
+
+    socket.onerror = function (error) {
+        console.log('WebSocket error: ' + error);
+    };}
+</script>
+  </body>
+</html>
