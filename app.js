@@ -44,7 +44,7 @@ io.on('connect', function(socket){
 	console.log('a user connected');
 	  socket.on('chat message', function(msg){
 		  console.log('message from client: ' + msg);
-		  request1("http://ec2-34-207-241-247.compute-1.amazonaws.com:5000/classify?sentence="+msg, function (error, response, body) {
+		  request1("http://54.172.196.198:5000/classify?sentence="+msg, function (error, response, body) {
 				console.log('error:', error); // Print the error if one occurred 
 				console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received 
 				console.log('body:', body); // Print the HTML for the Google homepage. 
@@ -71,8 +71,9 @@ io.on('connect', function(socket){
 				socket.on('disconnect', function(){
 				    console.log('user disconnected');
 				  });
-				socket.emit('chat message', input);
-				console.log("Replied: "+input);
+				var r = msg+"  :  "+body;
+				socket.emit('chat message', r);
+				console.log("Replied: "+body);
 			});
 		    
 		  
