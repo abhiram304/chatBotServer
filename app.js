@@ -65,7 +65,11 @@ io.on('connect', function(socket){
 				}
 				else if(body == 'DearyGreet'){
 					input = Greet[Math.floor(Math.random() * Greet.length)];
-				}else{
+				}
+			  	else if(body == ""){
+					input = 'I couldn\'t get that!';
+				}
+			  	else{
 					input = 'I couldn\'t get that!';
 				}
 				socket.on('disconnect', function(){
